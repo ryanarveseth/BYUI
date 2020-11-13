@@ -13,7 +13,7 @@ using namespace std;
 #define X "X"
 #define O "O"
 #define S "."
-#define SIZE_OF_BOARD 3
+#define SIZE_OF_BOARD 4
 
 bool read(char board[][SIZE_OF_BOARD], const char* fileName);
 bool write(const char board[][SIZE_OF_BOARD], const char* fileName);
@@ -97,7 +97,7 @@ bool write(const char board[][SIZE_OF_BOARD], const char* fileName)
     // write my 9 symbols
     for (int r = 0; r < SIZE_OF_BOARD; r++)
         for (int c = 0; c < SIZE_OF_BOARD; c++)
-            fout << board[r][c] << (c == 2 ? '\n' : ' ');
+            fout << board[r][c] << (c == SIZE_OF_BOARD - 1 ? '\n' : ' ');
 
     // close it!
     fout.close();
@@ -116,7 +116,11 @@ void display(const char board[][SIZE_OF_BOARD])
     {
         // only the first row is not preceeded with the --+-- magic
         if (r != 0)
-            cout << "---+---+---\n";
+            for (int i = 0; i < SIZE_OF_BOARD; i++)
+                if (i != SIZE_OF_BOARD - 1)
+                    cout << "---+";
+                else
+                    cout << "---\n";
 
         // now, on each row, do the column stuff
         for (int c = 0; c < SIZE_OF_BOARD; c++)
@@ -149,6 +153,43 @@ void display(const char board[][SIZE_OF_BOARD])
  *******************************************/
     bool didWin(const char board[][SIZE_OF_BOARD], char turn)
     {
+        for (int r = 0; r < SIZE_OF_BOARD; r++)
+            for (int c = 0; c < SIZE_OF_BOARD; c++)
+            {
+                for (int col = 0; col < SIZE_OF_BOARD; col++) // column
+                {
+                    if (board[r][col] != turn)
+                        break;
+                    if (col == SIZE_OF_BOARD - 1)
+                        return true;
+                }
+
+                for (int row = 0; row < SIZE_OF_BOARD; row++) // row
+                {
+                    if (board[row][c] != turn)
+                        break;
+                    if (row == SIZE_OF_BOARD - 1)
+                        return true;
+                }
+
+                if (r == c) // diagonal
+                    for (int i = 0; i < SIZE_OF_BOARD; i++) 
+                    {
+                        if (board[i][i] != turn)
+                            break;
+                        if (i == SIZE_OF_BOARD - 1)
+                            return true;
+                    }
+
+                if (r + c == SIZE_OF_BOARD - 1) // reverse diagonal
+                    for (int i = 0; i < SIZE_OF_BOARD; i++) 
+                    {
+                        if (board[i][(SIZE_OF_BOARD - 1) - i] != turn)
+                            break;
+                        if (i == SIZE_OF_BOARD - 1)
+                            return true;
+                    }
+            }
         return false;
     }
 
